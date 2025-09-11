@@ -77,9 +77,8 @@ function AdminUILib:Init()
     UICorner3.CornerRadius = UDim.new(0, 100)
     UICorner3.Parent = ToggleGUI
 
-    AdminUILib.Container = CMDS
+    self.Container = CMDS
 
-    -- Make ToggleGUI draggable
     ToggleGUI.Active = true
     ToggleGUI.Draggable = true
 
@@ -87,11 +86,84 @@ function AdminUILib:Init()
         Executor.Visible = not Executor.Visible
     end)
 
-    -- Make main frame draggable
     Executor.Active = true
     Executor.Draggable = true
+end
 
-    return AdminUILib
+function AdminUILib:CreateButton(data)
+    local Button = Instance.new("TextButton")
+    Button.Name = data.Name or "Button"
+    Button.Parent = self.Container
+    Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    Button.BorderSizePixel = 0
+    Button.Size = UDim2.new(0, 680, 0, 50)
+    Button.Font = Enum.Font.SourceSans
+    Button.Text = "   " .. (data.Text or "Unnamed")
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.TextSize = 24
+    Button.TextXAlignment = Enum.TextXAlignment.Left
+
+    local Desc = Instance.new("TextLabel")
+    Desc.Parent = Button
+    Desc.BackgroundTransparency = 1
+    Desc.Position = UDim2.new(0.02, 0, 0.55, 0)
+    Desc.Size = UDim2.new(0, 400, 0, 20)
+    Desc.Font = Enum.Font.SourceSans
+    Desc.Text = "Description: " .. (data.Description or "No description")
+    Desc.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Desc.TextSize = 18
+    Desc.TextXAlignment = Enum.TextXAlignment.Left
+
+    -- Tooltip
+    if data.HasToolTip then
+        local ToolTip = Instance.new("Frame")
+        ToolTip.Name = "ToolTip"
+        ToolTip.Parent = self.Container
+        ToolTip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        ToolTip.BorderSizePixel = 0
+        ToolTip.Size = UDim2.new(0, 200, 0, 60)
+        ToolTip.Visible = false
+        ToolTip.ZIndex = 10
+
+        local TipText = Instance.new("TextLabel")
+        TipText.Parent = ToolTip
+        TipText.BackgroundTransparency = 1
+        TipText.Size = UDim2.new(1, -10, 1, -10)
+        TipText.Position = UDim2.new(0, 5, 0, 5)
+        TipText.Font = Enum.Font.SourceSans
+        TipText.Text = data.Description or "Tooltip"
+        TipText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TipText.TextSize = 18
+        TipText.TextWrapped = true
+        TipText.TextXAlignment = Enum.TextXAlignment.Left
+        TipText.TextYAlignment = Enum.TextYAlignment.Top
+        TipText.ZIndex = 11
+
+        local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+
+        Button.MouseEnter:Connect(function()
+            ToolTip.Visible = true
+            TipText.Text = data.Description or "Tooltip"
+        end)
+
+        Button.MouseLeave:Connect(function()
+            ToolTip.Visible = false
+        end)
+
+        game:GetService("RunService").RenderStepped:Connect(function()
+            if ToolTip.Visible then
+                ToolTip.Position = UDim2.new(0, mouse.X + 15, 0, mouse.Y + 15)
+            end
+        end)
+    end
+
+    Button.MouseButton1Click:Connect(function()
+        if data.Callback then
+            data.Callback()
+        end
+    end)
+
+    return Button
 end
 
 return AdminUILib
