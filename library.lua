@@ -118,7 +118,7 @@ function AdminUILib:CreateButton(data)
     if data.HasToolTip then
         local ToolTip = Instance.new("Frame")
         ToolTip.Name = "ToolTip"
-        ToolTip.Parent = self.Container -- keep inside CMDS
+        ToolTip.Parent = self.Container
         ToolTip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         ToolTip.BorderSizePixel = 0
         ToolTip.Size = UDim2.new(0, 200, 0, 60)
