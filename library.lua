@@ -60,8 +60,41 @@ function AdminUILib:Init()
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIListLayout.Padding = UDim.new(0, 5)
 
+    -- Toggle button
+    local ToggleGUI = Instance.new("TextButton")
+    ToggleGUI.Name = "ToggleGUI"
+    ToggleGUI.Parent = Script
+    ToggleGUI.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    ToggleGUI.BorderSizePixel = 0
+    ToggleGUI.Position = UDim2.new(0.004, 0, 0, 0)
+    ToggleGUI.Size = UDim2.new(0, 40, 0, 40)
+    ToggleGUI.Font = Enum.Font.SourceSansBold
+    ToggleGUI.Text = "NA"
+    ToggleGUI.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleGUI.TextSize = 20
+
+    local UICorner3 = Instance.new("UICorner")
+    UICorner3.CornerRadius = UDim.new(0, 100)
+    UICorner3.Parent = ToggleGUI
+
     AdminUILib.Container = CMDS
+
+    -- Make ToggleGUI draggable
+    ToggleGUI.Active = true
+    ToggleGUI.Draggable = true
+
+    ToggleGUI.MouseButton1Click:Connect(function()
+        Executor.Visible = not Executor.Visible
+    end)
+
+    -- Make main frame draggable
+    Executor.Active = true
+    Executor.Draggable = true
+
     return AdminUILib
+end
+
+return AdminUILib
 end
 
 function AdminUILib:CreateButton(data)
