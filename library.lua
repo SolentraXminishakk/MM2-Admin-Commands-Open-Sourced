@@ -88,34 +88,49 @@ function AdminUILib:CreateButton(data)
     Desc.TextSize = 18
     Desc.TextXAlignment = Enum.TextXAlignment.Left
 
-    local ToolTip
-    if data.HasToolTip then
-        ToolTip = Instance.new("Frame")
-        ToolTip.Name = "ToolTip"
-        ToolTip.Parent = Button
-        ToolTip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        ToolTip.BorderSizePixel = 0
-        ToolTip.Size = UDim2.new(0, 150, 0, 70)
-        ToolTip.Visible = false
+-- Tooltip
+local ToolTip
+if data.HasToolTip then
+    ToolTip = Instance.new("Frame")
+    ToolTip.Name = "ToolTip"
+    ToolTip.Parent = self.Container -- keep inside CMDS, not button
+    ToolTip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    ToolTip.BorderSizePixel = 0
+    ToolTip.Size = UDim2.new(0, 200, 0, 60)
+    ToolTip.Visible = false
+    ToolTip.ZIndex = 10
 
-        local TipText = Instance.new("TextLabel")
-        TipText.Parent = ToolTip
-        TipText.BackgroundTransparency = 1
-        TipText.Size = UDim2.new(1, 0, 1, 0)
-        TipText.Font = Enum.Font.SourceSans
+    local TipText = Instance.new("TextLabel")
+    TipText.Parent = ToolTip
+    TipText.BackgroundTransparency = 1
+    TipText.Size = UDim2.new(1, -10, 1, -10)
+    TipText.Position = UDim2.new(0, 5, 0, 5)
+    TipText.Font = Enum.Font.SourceSans
+    TipText.Text = data.Description or "Tooltip"
+    TipText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TipText.TextSize = 18
+    TipText.TextWrapped = true
+    TipText.TextXAlignment = Enum.TextXAlignment.Left
+    TipText.TextYAlignment = Enum.TextYAlignment.Top
+    TipText.ZIndex = 11
+
+    local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+
+    Button.MouseEnter:Connect(function()
+        ToolTip.Visible = true
         TipText.Text = data.Description or "Tooltip"
-        TipText.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TipText.TextSize = 18
-        TipText.TextWrapped = true
+    end)
 
-        Button.MouseEnter:Connect(function()
-            ToolTip.Visible = true
-            ToolTip.Position = UDim2.new(0, game:GetService("Players").LocalPlayer:GetMouse().X, 0, game:GetService("Players").LocalPlayer:GetMouse().Y - 100)
-        end)
-        Button.MouseLeave:Connect(function()
-            ToolTip.Visible = false
-        end)
-    end
+    Button.MouseLeave:Connect(function()
+        ToolTip.Visible = false
+    end)
+
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if ToolTip.Visible then
+            ToolTip.Position = UDim2.new(0, mouse.X + 15, 0, mouse.Y + 15)
+        end
+    end)
+end
 
     Button.MouseButton1Click:Connect(function()
         if data.Callback then
