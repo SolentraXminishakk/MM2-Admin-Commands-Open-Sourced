@@ -6,7 +6,7 @@ local settings = {
     SaveConfiguration = true,
     Prefix = ";",
     Place = game.PlaceId,
-    Keybind = {'Delete'},
+    Keybind = {'Delete'}
 }
 
 -- storage for registered commands
