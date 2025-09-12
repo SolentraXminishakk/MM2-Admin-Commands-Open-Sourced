@@ -82,7 +82,7 @@ function AdminUILib:Init()
     return self
 end
 
-function AdminUILib:CreateButton(data)
+function AdminUILib:CreateCMD(data)
     local Button = Instance.new("TextButton")
     Button.Name = data.Name or "Button"
     Button.Parent = self.Container
