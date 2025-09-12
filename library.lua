@@ -4,7 +4,7 @@ local AdminUILib = {}
 
 function AdminUILib:Init()
     local Script = Instance.new("ScreenGui")
-    Script.Name = "Script"
+    Script.Name = "AdminUI"
     Script.Parent = game:GetService("CoreGui")
     Script.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -16,9 +16,7 @@ function AdminUILib:Init()
     Executor.Position = UDim2.new(0.3, 0, 0.3, 0)
     Executor.Size = UDim2.new(0, 712, 0, 344)
 
-    local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 9)
-    UICorner.Parent = Executor
+    Instance.new("UICorner", Executor).CornerRadius = UDim.new(0, 9)
 
     local Title = Instance.new("TextLabel")
     Title.Parent = Executor
@@ -50,9 +48,7 @@ function AdminUILib:Init()
     CMDS.Size = UDim2.new(0, 693, 0, 230)
     CMDS.ScrollBarThickness = 4
 
-    local UICorner2 = Instance.new("UICorner")
-    UICorner2.CornerRadius = UDim.new(0, 9)
-    UICorner2.Parent = CMDS
+    Instance.new("UICorner", CMDS).CornerRadius = UDim.new(0, 9)
 
     local UIListLayout = Instance.new("UIListLayout")
     UIListLayout.Parent = CMDS
@@ -73,21 +69,17 @@ function AdminUILib:Init()
     ToggleGUI.TextColor3 = Color3.fromRGB(255, 255, 255)
     ToggleGUI.TextSize = 20
 
-    local UICorner3 = Instance.new("UICorner")
-    UICorner3.CornerRadius = UDim.new(0, 100)
-    UICorner3.Parent = ToggleGUI
+    Instance.new("UICorner", ToggleGUI).CornerRadius = UDim.new(0, 100)
 
     self.Container = CMDS
-
-    ToggleGUI.Active = true
-    ToggleGUI.Draggable = true
+    self.Script = Script
+    self.Executor = Executor
 
     ToggleGUI.MouseButton1Click:Connect(function()
         Executor.Visible = not Executor.Visible
     end)
 
-    Executor.Active = true
-    Executor.Draggable = true
+    return self
 end
 
 function AdminUILib:CreateButton(data)
@@ -106,19 +98,20 @@ function AdminUILib:CreateButton(data)
     local Desc = Instance.new("TextLabel")
     Desc.Parent = Button
     Desc.BackgroundTransparency = 1
-    Desc.Position = UDim2.new(0.02, 0, 0.55, 0)
-    Desc.Size = UDim2.new(0, 400, 0, 20)
+    Desc.AnchorPoint = Vector2.new(0, 1)
+    Desc.Position = UDim2.new(0.02, 0, 1, -5)
+    Desc.Size = UDim2.new(1, -10, 0, 20)
     Desc.Font = Enum.Font.SourceSans
     Desc.Text = "Description: " .. (data.Description or "No description")
-    Desc.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Desc.TextSize = 18
+    Desc.TextColor3 = Color3.fromRGB(200, 200, 200)
+    Desc.TextSize = 16
     Desc.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Tooltip
+    -- Tooltip fix
     if data.HasToolTip then
         local ToolTip = Instance.new("Frame")
         ToolTip.Name = "ToolTip"
-        ToolTip.Parent = self.Container
+        ToolTip.Parent = self.Script
         ToolTip.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
         ToolTip.BorderSizePixel = 0
         ToolTip.Size = UDim2.new(0, 200, 0, 60)
@@ -143,7 +136,6 @@ function AdminUILib:CreateButton(data)
 
         Button.MouseEnter:Connect(function()
             ToolTip.Visible = true
-            TipText.Text = data.Description or "Tooltip"
         end)
 
         Button.MouseLeave:Connect(function()
@@ -152,7 +144,7 @@ function AdminUILib:CreateButton(data)
 
         game:GetService("RunService").RenderStepped:Connect(function()
             if ToolTip.Visible then
-                ToolTip.Position = UDim2.new(0, mouse.X + 15, 0, mouse.Y + 15)
+                ToolTip.Position = UDim2.fromOffset(mouse.X + 15, mouse.Y + 15)
             end
         end)
     end
