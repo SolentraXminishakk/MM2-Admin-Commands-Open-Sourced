@@ -2,6 +2,35 @@
 
 local AdminUILib = {}
 
+local settings = {
+    SaveConfiguration = true,
+    Prefix = ";",
+    Place = game.PlaceId,
+    Keybind = {'Delete'},
+}
+
+-- storage for registered commands
+local CommandRegistry = {}
+
+-- Chat listener
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function onChat(msg)
+    if msg:sub(1, #settings.Prefix) == settings.Prefix then
+        local cmdText = msg:sub(#settings.Prefix + 1) -- remove prefix
+        local args = string.split(cmdText, " ")      -- split words
+        local cmdName = args[1]:lower()
+
+        if CommandRegistry[cmdName] and CommandRegistry[cmdName].Callback then
+            CommandRegistry[cmdName].Callback(unpack(args, 2))
+        end
+    end
+end
+
+-- connect once
+LocalPlayer.Chatted:Connect(onChat)
+
 function AdminUILib:Init()
     local Script = Instance.new("ScreenGui")
     Script.Name = "AdminUI"
@@ -107,7 +136,7 @@ function AdminUILib:CreateCMD(data)
     Desc.TextSize = 16
     Desc.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Tooltip fix
+    -- Tooltip
     if data.HasToolTip then
         local ToolTip = Instance.new("Frame")
         ToolTip.Name = "ToolTip"
@@ -132,7 +161,7 @@ function AdminUILib:CreateCMD(data)
         TipText.TextYAlignment = Enum.TextYAlignment.Top
         TipText.ZIndex = 11
 
-        local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+        local mouse = LocalPlayer:GetMouse()
 
         Button.MouseEnter:Connect(function()
             ToolTip.Visible = true
@@ -155,7 +184,17 @@ function AdminUILib:CreateCMD(data)
         end
     end)
 
+    -- Register command in chat system
+    if data.Text then
+        local cmdName = data.Text:gsub(settings.Prefix, ""):lower()
+        CommandRegistry[cmdName] = {
+            Callback = data.Callback,
+            Description = data.Description,
+        }
+    end
+
     return Button
 end
 
 return AdminUILib
+-- created by aesthetical
