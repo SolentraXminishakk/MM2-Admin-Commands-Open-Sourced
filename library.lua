@@ -2,13 +2,6 @@
 
 local AdminUILib = {}
 
-local settings = {
-    SaveConfiguration = true,
-    Prefix = ";",
-    Place = game.PlaceId,
-    Keybind = {'Delete'}
-}
-
 -- storage for registered commands
 local CommandRegistry = {}
 
